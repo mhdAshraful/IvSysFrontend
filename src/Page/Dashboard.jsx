@@ -18,6 +18,7 @@ import {
   Tooltip,
   Legend,
   Filler,
+  layouts,
 } from "chart.js";
 import { Line, Doughnut } from "react-chartjs-2";
 import styled from "styled-components";
@@ -35,22 +36,36 @@ ChartJS.register(
 );
 
 const Styledchart = styled.div`
-  width: 100vw;
-  height: 35vh;
+  width: 100%;
+  height: 500px;
 
   display: flex;
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
+  gap: 2rem;
+
+  h3 {
+    line-height: 1;
+    margin: 0;
+  }
 
   .lineChart {
-    width: 50vw;
-    height: 30vh;
+    width: 60%;
+    height: 500px;
+    padding: 1rem;
+    background-color: #fff;
+    border: 0;
+    border-radius: 1rem;
   }
 
   .doughnutChart {
-    width: 40vw;
-    height: 40vh;
+    width: 40%;
+    height: 500px;
+    padding: 1rem;
+    background-color: #fff;
+    border: 0;
+    border-radius: 1rem;
   }
 `;
 
@@ -117,6 +132,8 @@ const Dashboard = () => {
 const MotionLineChart = ({ monthlySale }) => {
   console.log("line m sale", monthlySale);
   const data = {
+    width: 300,
+    height: 300,
     labels: Object.keys(monthlySale),
     datasets: [
       {
@@ -142,7 +159,12 @@ const MotionLineChart = ({ monthlySale }) => {
     ],
   };
 
-  return <Line className="lineChart" data={data} />;
+  return (
+    <div className="lineChart">
+      <h3>Order Analytics</h3>
+      <Line data={data} options={{ layout: { padding: 20 } }} />
+    </div>
+  );
 };
 
 const MotionDoughChart = ({ monthlySale }) => {
@@ -169,7 +191,12 @@ const MotionDoughChart = ({ monthlySale }) => {
     ],
   };
 
-  return <Doughnut className="doughnutChart" data={data} />;
+  return (
+    <div className="doughnutChart">
+      <h3>Earnings</h3>
+      <Doughnut data={data} options={{ layout: { padding: 20 } }} />
+    </div>
+  );
 };
 
 export default Dashboard;

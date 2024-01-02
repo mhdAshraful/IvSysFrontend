@@ -15,7 +15,7 @@ const Background = styled.div`
   padding: 0;
   margin: 0;
   width: 96vw;
-  height: 95vh;
+  height: 94vh;
 
   margin: 2rem;
   border: 0;
