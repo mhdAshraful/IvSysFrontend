@@ -22,6 +22,11 @@ import {
 } from "chart.js";
 import { Line, Doughnut } from "react-chartjs-2";
 import styled from "styled-components";
+import { IconContext } from "react-icons";
+import { HiMiniUsers, HiBriefcase } from "react-icons/hi2";
+import { IoCheckmarkDoneCircleOutline } from "react-icons/io5";
+import { LuRedo2 } from "react-icons/lu";
+import { GoArrowDownLeft, GoArrowUpRight } from "react-icons/go";
 
 ChartJS.register(
   CategoryScale,
@@ -34,11 +39,19 @@ ChartJS.register(
   Legend,
   Filler
 );
-
+const StyledDashboard = styled.div`
+  padding: 2rem 3rem;
+  .topcards {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+  }
+`;
 const Styledchart = styled.div`
   width: 100%;
   height: 500px;
-
+  margin: 2rem 0;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
@@ -111,26 +124,122 @@ const Dashboard = () => {
     // console.log("after looop", monthlySale);
     setMonthlySale(newMonthlySale);
   };
-
+  const cards = ["user", "product", "newuser", "refund"];
   return (
-    <div>
-      <motion.div>
-        <h2>Dashboard</h2>
-        <Suspense fallback={<div>Loading...</div>}>
-          {Object.keys(monthlySale).length > 0 && (
-            <Styledchart>
-              <MotionLineChart monthlySale={monthlySale} />
-              <MotionDoughChart monthlySale={monthlySale} />
-            </Styledchart>
+    <StyledDashboard>
+      <h2>Dashboard</h2>
+      <Suspense fallback={<div>Loading...</div>}>
+        <div className="topcards">
+          {cards.map((elm, ind) => (
+            <CreateCard
+              icon={elm.toString()}
+              data={{
+                number: 2584,
+                stats: ind % 2 == 0 ? "positive" : "negative",
+                statsNum: ind % 2 == 0 ? "+0.4%" : "-0.5%",
+              }}
+            />
+          ))}
+        </div>
+
+        {Object.keys(monthlySale).length > 0 && (
+          <Styledchart>
+            <MotionLineChart monthlySale={monthlySale} />
+            <MotionDoughChart monthlySale={monthlySale} />
+          </Styledchart>
+        )}
+      </Suspense>
+    </StyledDashboard>
+  );
+};
+
+const StyledSmallCard = styled.div`
+  width: 260px;
+  height: 140px;
+  background-color: #fff;
+  border: 0;
+  border-radius: 1rem;
+  margin: 2rem 0;
+  padding: 1rem;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 0.5rem;
+  .top {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 20px;
+  }
+  .bottom {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: start;
+    gap: 0.5rem;
+    font-weight: 400;
+
+    .info {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  }
+`;
+
+const CreateCard = ({
+  name = "Total User",
+  data = { number: 34584, stats: "positive", statsNum: "-0.5%" },
+  icon = "user",
+}) => {
+  return (
+    <StyledSmallCard>
+      <div className="top">
+        <h2 className="heading">{data.number}</h2>
+        <IconContext.Provider
+          value={{
+            color: "#7bfc36",
+            className: "global-class-name",
+            size: "40px",
+            style: {
+              padding: "4px",
+              borderRadius: "4px",
+              backgroundColor: "#eff8ea",
+            },
+          }}
+        >
+          {icon === "user" ? (
+            <HiMiniUsers />
+          ) : icon === "newuser" ? (
+            <IoCheckmarkDoneCircleOutline />
+          ) : icon === "product" ? (
+            <HiBriefcase />
+          ) : (
+            <LuRedo2 />
           )}
-        </Suspense>
-      </motion.div>
-    </div>
+        </IconContext.Provider>
+      </div>
+      <div className="bottom">
+        <p className="name">{name}</p>
+        <div className="info">
+          {data.stats === "positive" ? (
+            <GoArrowUpRight color="#02B727" />
+          ) : (
+            <GoArrowDownLeft color="#FE2C1D" />
+          )}
+          {data.statsNum} this week
+        </div>
+      </div>
+    </StyledSmallCard>
   );
 };
 
 const MotionLineChart = ({ monthlySale }) => {
-  console.log("line m sale", monthlySale);
   const data = {
     width: 300,
     height: 300,
