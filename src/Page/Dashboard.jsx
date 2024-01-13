@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import React, {
   Suspense,
   useEffect,
@@ -6,6 +5,8 @@ import React, {
   useState,
   use,
 } from "react";
+import Loading from "../Components/Loading";
+import { Leva } from "leva";
 import axios from "axios";
 import {
   Chart as ChartJS,
@@ -27,7 +28,6 @@ import { HiMiniUsers, HiBriefcase } from "react-icons/hi2";
 import { IoCheckmarkDoneCircleOutline } from "react-icons/io5";
 import { LuRedo2 } from "react-icons/lu";
 import { GoArrowDownLeft, GoArrowUpRight } from "react-icons/go";
-
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -40,7 +40,7 @@ ChartJS.register(
   Filler
 );
 const StyledDashboard = styled.div`
-  padding: 2rem 3rem;
+  padding: 3rem 4rem;
   .topcards {
     width: 100%;
     display: flex;
@@ -79,12 +79,30 @@ const Styledchart = styled.div`
     background-color: #fff;
     border: 0;
     border-radius: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    div {
+      height: 90%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      canvas {
+        align-self: center;
+      }
+    }
+    b {
+      margin-top: 1rem;
+      align-self: center;
+    }
   }
 `;
 
 const Dashboard = () => {
+  const [loading, setLoading] = useState(true);
   const [data, setData] = useState({});
   const { totalOrderDetails } = data;
+
   let [monthlySale, setMonthlySale] = useState({});
 
   useEffect(() => {
@@ -94,6 +112,7 @@ const Dashboard = () => {
         .then((res) => {
           // console.log("-res data-->", res.data);
           setData(res.data);
+          setLoading(false);
         })
         .catch((err) => {
           console.log("problem found:", err);
@@ -121,35 +140,60 @@ const Dashboard = () => {
       newMonthlySale[month][types] += amount;
     });
 
-    // console.log("after looop", monthlySale);
     setMonthlySale(newMonthlySale);
   };
   const cards = ["user", "product", "newuser", "refund"];
-  return (
-    <StyledDashboard>
-      <h2>Dashboard</h2>
-      <Suspense fallback={<div>Loading...</div>}>
-        <div className="topcards">
-          {cards.map((elm, ind) => (
-            <CreateCard
-              icon={elm.toString()}
-              data={{
-                number: 2584,
-                stats: ind % 2 == 0 ? "positive" : "negative",
-                statsNum: ind % 2 == 0 ? "+0.4%" : "-0.5%",
-              }}
-            />
-          ))}
-        </div>
+  return loading ? (
+    <>
+      <Leva oneLineLabels flat collapsed />
+      <Loading
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          zindex: 100,
+          width: "100vw",
+          height: "100vh",
+        }}
+      />
+    </>
+  ) : (
+    <>
+      <StyledDashboard>
+        <h2>Dashboard</h2>
+        <Suspense fallback={<div>Loading...</div>}>
+          <div className="topcards">
+            {cards.map((elm, ind) => (
+              <CreateCard
+                key={ind}
+                icon={elm.toString()}
+                data={{
+                  number: 736 * (ind + 3),
+                  stats: ind % 2 == 0 ? "positive" : "negative",
+                  statsNum: ind % 2 == 0 ? "+0.4%" : "-0.5%",
+                }}
+                name={
+                  ind === 0
+                    ? "Total User"
+                    : ind === 1
+                    ? "Total Product"
+                    : ind === 2
+                    ? "New User"
+                    : "Refund"
+                }
+              />
+            ))}
+          </div>
 
-        {Object.keys(monthlySale).length > 0 && (
-          <Styledchart>
-            <MotionLineChart monthlySale={monthlySale} />
-            <MotionDoughChart monthlySale={monthlySale} />
-          </Styledchart>
-        )}
-      </Suspense>
-    </StyledDashboard>
+          {Object.keys(monthlySale).length > 0 && (
+            <Styledchart>
+              <MotionLineChart monthlySale={monthlySale} />
+              <MotionDoughChart monthlySale={monthlySale} />
+            </Styledchart>
+          )}
+        </Suspense>
+      </StyledDashboard>
+    </>
   );
 };
 
@@ -166,7 +210,7 @@ const StyledSmallCard = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  gap: 0.5rem;
+  gap: 1rem;
   .top {
     width: 100%;
     display: flex;
@@ -203,13 +247,14 @@ const CreateCard = ({
         <h2 className="heading">{data.number}</h2>
         <IconContext.Provider
           value={{
-            color: "#7bfc36",
+            color: "#54b71f",
+            // color: "#E5FF70",
             className: "global-class-name",
             size: "40px",
             style: {
               padding: "4px",
               borderRadius: "4px",
-              backgroundColor: "#eff8ea",
+              backgroundColor: "#EFF1E9",
             },
           }}
         >
@@ -302,8 +347,14 @@ const MotionDoughChart = ({ monthlySale }) => {
 
   return (
     <div className="doughnutChart">
-      <h3>Earnings</h3>
-      <Doughnut data={data} options={{ layout: { padding: 20 } }} />
+      <div>
+        <h3>Earnings</h3>
+        <Doughnut data={data} options={{ layout: { padding: 20 } }} />
+      </div>
+
+      <b>
+        {"Online: $" + totalOnlineSales}, {"Offline: $" + totalOfflineSales}
+      </b>
     </div>
   );
 };

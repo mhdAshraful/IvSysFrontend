@@ -11,8 +11,6 @@ import Navigation from "./Components/Navigation";
 import Orders from "./Page/Orders";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <>
       <Navigation />
