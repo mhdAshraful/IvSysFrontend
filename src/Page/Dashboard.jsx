@@ -1,12 +1,5 @@
-import React, {
-  Suspense,
-  useEffect,
-  useLayoutEffect,
-  useState,
-  use,
-} from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import Loading from "../Components/Loading";
-import { Leva } from "leva";
 import axios from "axios";
 import {
   Chart as ChartJS,
@@ -19,7 +12,6 @@ import {
   Tooltip,
   Legend,
   Filler,
-  layouts,
 } from "chart.js";
 import { Line, Doughnut } from "react-chartjs-2";
 import styled from "styled-components";
@@ -28,6 +20,7 @@ import { HiMiniUsers, HiBriefcase } from "react-icons/hi2";
 import { IoCheckmarkDoneCircleOutline } from "react-icons/io5";
 import { LuRedo2 } from "react-icons/lu";
 import { GoArrowDownLeft, GoArrowUpRight } from "react-icons/go";
+import { useControls } from "leva";
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -99,7 +92,6 @@ const Styledchart = styled.div`
 `;
 
 const Dashboard = () => {
-  const [loading, setLoading] = useState(true);
   const [data, setData] = useState({});
   const { totalOrderDetails } = data;
 
@@ -112,7 +104,6 @@ const Dashboard = () => {
         .then((res) => {
           // console.log("-res data-->", res.data);
           setData(res.data);
-          setLoading(false);
         })
         .catch((err) => {
           console.log("problem found:", err);
@@ -143,21 +134,7 @@ const Dashboard = () => {
     setMonthlySale(newMonthlySale);
   };
   const cards = ["user", "product", "newuser", "refund"];
-  return loading ? (
-    <>
-      <Leva oneLineLabels flat collapsed />
-      <Loading
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          zindex: 100,
-          width: "100vw",
-          height: "100vh",
-        }}
-      />
-    </>
-  ) : (
+  return (
     <>
       <StyledDashboard>
         <h2>Dashboard</h2>

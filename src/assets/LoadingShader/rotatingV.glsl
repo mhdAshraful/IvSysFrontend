@@ -122,7 +122,7 @@ void main() {
 // we calculate return fractional part from tume and speed, which is lessthan 1.0, then subtract the offset from it
 // this will
 
-    float distortonProgressOnOffset = clamp((fract(uTime * uSpeed) - .05 * uDistortion * offset), 0., 1.);
+    float distortonProgressOnOffset = clamp((fract(uTime * uSpeed * 0.8) - .05 * uDistortion * offset), 0., 1.);
 
 // easing the progress 
     distortonProgressOnOffset = qinticInOut(distortonProgressOnOffset) * PI * 2.;
